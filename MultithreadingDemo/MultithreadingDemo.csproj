@@ -63,8 +63,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BaseActiveObject.cs" />
-    <Compile Include="DataGenerator.cs" />
-    <Compile Include="GeneratorState.cs" />
+    <Compile Include="EventGenerator\GeneratorActor.cs" />
+    <Compile Include="EventGenerator\EventProducer.cs" />
+    <Compile Include="EventGenerator\OpenOrder.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

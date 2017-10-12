@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 using MultithreadingDemo.ProcessingStrategies;
 
-namespace MultithreadingDemo
+namespace MultithreadingDemo.EventGenerator
 {
     /// <summary>
     /// Imitates a source of data, either a real-time feed that has been subscribed, or some large data store that is being stream out of.
     /// It produces string FIX messages, which then each processing strategy must parse to use.
     /// </summary>
-    internal class DataGenerator : BaseActiveObject
+    internal class GeneratorActor : BaseActiveObject
     {
         private const int MESSAGE_BATCH_COUNT = 1000;
         private const int MAXIMUM_CONCURRENT_ORDERS = 100;
@@ -22,14 +22,14 @@ namespace MultithreadingDemo
         private const ThreadPriority THREAD_PRIORITY = ThreadPriority.AboveNormal;
         
         private readonly IStrategy _strategy;
-        private readonly GeneratorState _generatorState;
+        private readonly EventProducer _generatorState;
 
-        public DataGenerator(IStrategy strategy)
+        public GeneratorActor(IStrategy strategy)
         {            
             this._strategy = strategy;
 
             var randomSeed = (int)DateTime.Now.TimeOfDay.TotalMilliseconds;
-            this._generatorState = new GeneratorState(MAXIMUM_CONCURRENT_ORDERS, randomSeed); 
+            this._generatorState = new EventProducer(MAXIMUM_CONCURRENT_ORDERS, randomSeed); 
 
             base.StartActiveObject("DataGenerator", THREAD_PRIORITY);                                       
         }

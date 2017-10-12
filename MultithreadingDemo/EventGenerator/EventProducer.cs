@@ -4,28 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultithreadingDemo
+namespace MultithreadingDemo.EventGenerator
 {
     /// <summary>
-    /// A state machine capable of producing FIX messages representing orders being entered/exited in the market.
+    /// A stateful generator capable of producing FIX messages representing orders being entered/modified/closed in the market.
     /// 
     /// This class is *NOT* thread-safe.
     /// </summary>
     /// <remarks>
     /// </remarks>
-    internal class GeneratorState
+    internal class EventProducer
     {
         private const int MAX_TRADER_COUNT = 5;
         private const int MAX_PRODUCT_COUNT = 2;
 
-        private const double PERCENTAGE_CHANCE_CHANGE_ORDER_INSTEAD_OF_NEW = 0.4;
-        
+        private const double PERCENTAGE_CHANCE_CHANGE_ORDER_INSTEAD_OF_NEW = 0.6;
+
+        private const double PERCENTAGE_CHANCE_FILL_EXISTING_ORDER = 0.2; 
+        private const double PERCENTAGE_CHANCE_MODIFY_EXISTING_ORDER = 0.5;
+        // Remainder is PERCENTAGE_CHANCE_CANCEL_EXISTING_ORDER = 0.3;
+
+        private const double PERCENTAGE_CHANCE_PARTIAL_FILL = 0.5;
+                
         private readonly int _maximum_concurrent_orders;
         private readonly System.Random _random;
 
         private List<object> _openOrders = new List<object>();
 
-        public GeneratorState(int maximum_concurrent_orders, int random_seed)
+        public EventProducer(int maximum_concurrent_orders, int random_seed)
         {
             this._maximum_concurrent_orders = maximum_concurrent_orders;
             this._random = new System.Random(random_seed);
@@ -43,7 +49,7 @@ namespace MultithreadingDemo
             }
 
             // Otherwise, randomly create a new, or change an existing orders.
-            if (this._random.NextDouble() >= PERCENTAGE_CHANCE_CHANGE_ORDER_INSTEAD_OF_NEW)
+            if (this._random.NextDouble() < PERCENTAGE_CHANCE_CHANGE_ORDER_INSTEAD_OF_NEW)
             {
                 return GenerateEventForExistingOrder();
             }
@@ -83,7 +89,6 @@ namespace MultithreadingDemo
             this._openOrders.RemoveAt(0);
             return "TODO";
         }
-
 
     }
 }
